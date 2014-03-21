@@ -2,7 +2,7 @@
 
 class G2K_WP_Utils
 {
-    public $showAdminBar = true;
+    public $removeAdminBar = true;
 
     public function __construct()
     {
@@ -17,7 +17,7 @@ class G2K_WP_Utils
 
     protected function _showHideThings()
     {
-        if (!$this->showAdminBar) {
+        if ($this->removeAdminBar) {
             add_filter('show_admin_bar', '__return_false');
         }
     }
