@@ -126,4 +126,27 @@ class G2K_WP_Utils
             add_filter ('template_include', 'debug_404_template_dump');
         }
     }
+
+    public static function get_the_excerpt($post_id, $excerpt_length = 35, $line_breaks = true)
+    {
+        $the_post = get_post($post_id);
+        $the_excerpt = $the_post->post_excerpt ?: $the_post->post_content;
+
+        $the_excerpt = apply_filters('the_excerpt', $the_excerpt);
+        $the_excerpt = $line_breaks ?
+            strip_tags(strip_shortcodes($the_excerpt), '<p><br>') :
+            strip_tags(strip_shortcodes($the_excerpt));
+
+        $words = explode(' ', $the_excerpt, $excerpt_length + 1);
+        if(count($words) > $excerpt_length) {
+            array_pop($words);
+            array_push($words, '…');
+            $the_excerpt = implode(' ', $words);
+            $the_excerpt = $line_breaks ? $the_excerpt . '</p>' : $the_excerpt;
+        }
+
+        $the_excerpt = trim($the_excerpt);
+
+        return $the_excerpt;
+    }
 } 
