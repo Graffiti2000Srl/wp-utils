@@ -4,6 +4,7 @@ class G2K_WP_Utils
 {
     public $removeAdminBar = false;
     public $removeComments = false;
+    public $removePosts    = false;
 
     public $debugRouting = false;
 
@@ -47,6 +48,13 @@ class G2K_WP_Utils
                 global $wp_admin_bar;
 
                 $wp_admin_bar->remove_menu('comments');
+            }
+        }
+
+        if ($this->removePosts) {
+            add_action('admin_menu', 'wputils_post_remove');
+            function wputils_post_remove () {
+                remove_menu_page('edit.php');
             }
         }
     }
