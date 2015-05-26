@@ -4,7 +4,6 @@ class G2K_WP_Utils
 {
     public $removeAdminBar = false;
     public $removeComments = false;
-    public $removePosts    = false;
 
     public $debugRouting = false;
 
@@ -48,13 +47,6 @@ class G2K_WP_Utils
                 global $wp_admin_bar;
 
                 $wp_admin_bar->remove_menu('comments');
-            }
-        }
-
-        if ($this->removePosts) {
-            add_action('admin_menu', 'wputils_post_remove');
-            function wputils_post_remove () {
-                remove_menu_page('edit.php');
             }
         }
     }
@@ -157,4 +149,34 @@ class G2K_WP_Utils
 
         return $the_excerpt;
     }
-} 
+}
+
+function g2k_get_sidebar ($name = null) {
+    global $sidebar_name;
+
+    do_action( 'get_sidebar', $name );
+
+    $templates = array();
+    $sidebar_name = $name = (string) $name;
+    if ( '' !== $name ) {
+        $offset = 0;
+        for ($i = 0, $tot = substr_count($name, '-'); $i <= $tot; ++$i) {
+            $offset = strpos($name, '-', $offset);
+            if ($offset) {
+                $templates[] = 'sidebar-' . substr($name, 0, $offset) . '.php';
+            } else {
+                $templates[] = "sidebar-{$name}.php";
+            }
+
+            $offset = $offset + 1;
+        }
+    }
+
+    $templates = array_reverse($templates);
+
+    $templates[] = 'sidebar.php';
+
+    // Backward compat code will be removed in a future release
+    if ('' == locate_template($templates, true, false))
+        load_template( ABSPATH . WPINC . '/theme-compat/sidebar.php');
+}
